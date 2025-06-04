@@ -1,0 +1,117 @@
+# INS_PO-DEALER_PO_PROBLEM_STATEMENT
+
+## 📌 Objective
+
+The purpose of this project is to analyze discrepancies between the insurance payout and dealer payout for motor insurance policies. 
+It helps identify **Master Dealers** whose payout structure may indicate overpayment (i.e., when dealer payout exceeds the insurer's payout).
+
+---
+
+## 🗂️ Project Structure
+INS_PO-DEALER_PO_PROBLEM_STATEMENT/
+├── data/
+│ └── oct2024_feb2025.xlsx # Input Excel file with raw policy data
+├── notebooks/
+│ └── analysis.ipynb # Jupyter notebook with complete analysis code
+├── exports/
+│ ├── Master_Dealer_Policy_Analysis.xlsx
+│ └── Master_Dealer_Policy_Analysis_Report_Single_Branch.xlsx
+├── README.md # This file
+└── requirements.txt # Python dependencies
+
+---
+
+## 📊 Problem Definition
+
+Each record in the data contains:
+- `Master_Dealer_Name`
+- `Insurance_Policy_No`
+- `INS_PAYOUT_IN_Rs` (amount paid by insurer)
+- `NET_DEALER_PAYOUT` (amount paid to the dealer)
+- `Month` (date of issuance)
+- `BRANCH NAME`
+
+### Goal:
+1. Identify policies where:INS_PAYOUT_IN_Rs < NET_DEALER_PAYOUT
+
+2. Determine how many such policies exist for each dealer.
+3. Tag dealers with:
+- ✅ `SOLVED`: All policies satisfy the condition.
+- ❌ `FAILED`: At least one policy doesn't satisfy the condition.
+
+---
+
+## 🧪 Methodology
+
+### Step 1: Data Cleaning
+- Convert `INS_PAYOUT_IN_Rs` and `NET_DEALER_PAYOUT` to numeric values.
+- Handle currency symbols, commas, and missing values using `pandas.to_numeric`.
+
+### Step 2: Filtering Condition
+```python
+filtered_df = df[
+ (df['INS_PAYOUT_IN_Rs'] < df['NET_DEALER_PAYOUT']) &
+ df['INS_PAYOUT_IN_Rs'].notna() &
+ df['NET_DEALER_PAYOUT'].notna()
+]
+
+
+final_report['PROBLEM'] = final_report.apply(
+    lambda row: 'SOLVED' if row['NO OF POLICY ISSUED IN TOTAL'] == row['CONDITION SATISFIED']
+    else 'FAILED', axis=1
+)
+
+### Step 3: Dealer-level Aggregation
+Count total policies and filtered (problematic) policies per Master_Dealer_Name.
+
+### Step 4: Problem Classification
+
+final_report['PROBLEM'] = final_report.apply(
+    lambda row: 'SOLVED' if row['NO OF POLICY ISSUED IN TOTAL'] == row['CONDITION SATISFIED']
+    else 'FAILED', axis=1
+)
+
+Interactive Dashboard
+Developed using:
+
+Plotly (for charts)
+
+ipywidgets (for filters)
+
+Jupyter Notebook (for interactive experience)
+
+Filters Available:
+Month & Year
+
+Problem Status (All, SOLVED, FAILED)
+
+Policy Count Range
+
+Branch Filter (All Dealers, Only Single Branch Dealers)
+
+Charts Displayed:
+📊 Total vs Condition-Satisfied Policies
+
+💰 INS_PAYOUT vs NET_DEALER_PAYOUT
+
+📈 NET_REVENUE by Dealer (optional/reconstructed if not in data)
+
+📤 Export Options
+Reports are saved as .xlsx files using pandas.ExcelWriter, including:
+
+Full dealer-level report
+
+Summary table (SOLVED vs FAILED)
+
+Filtered versions (e.g., for single-branch dealers)
+
+🧱 Requirements
+Create a requirements.txt file with:
+
+pandas
+openpyxl
+xlsxwriter
+plotly
+ipywidgets
+matplotlib
+seaborn
